@@ -1,0 +1,54 @@
+package com.yychatclient.controller;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+import com.yychat.model.Message;
+import com.zxwchat.view.FriendChat1;
+//import com.yychatserver.controller.StartServer;
+import com.zxwchat.view.FriendList;
+
+public class ClientReceiverThread extends Thread{
+    private Socket s;
+    
+    public ClientReceiverThread(Socket s){
+    	this.s=s;
+    }
+    public void run(){
+    	ObjectInputStream ois;
+    
+    	while(true){
+    		try {
+    			//接收Message信息
+    			ois = new ObjectInputStream(s.getInputStream());
+    			Message mess=(Message)ois.readObject();//接收聊天消息,线程阻塞
+                String showMessage=mess.getSender()+ "对"+mess.getReceiver()+"说"+mess.getContent();
+                System.out.println(showMessage);
+    			//在好友界面
+                //1.如何拿到好友列表
+                FriendChat1 friendChat1=(FriendChat1)FriendList.hmFriendChat1.get(mess.getReceiver()+"to"+mess.getSender());//
+                
+                //2.再显示信息
+                friendChat1.appendjta(showMessage);
+                
+                //3.客户端接收服务器发送过来的在线好友信息，然后利用该信息激活在线好友图标
+                if(mess.getMessageType().equals(Message.message_OnlineFriend)){
+                	
+                }
+                
+                //System.out.println(mess.getSender()+"对"+mess.getReceiver()+"说"+mess.getContent());
+//    			
+//    			Socket s1=(Socket)StartServer.hmSocket.get(mess.getReceiver());
+//    			oos=new ObjectOutputStream(s1.getOutputStream());
+//    			oos.writeObject(mess);//转发聊天信息
+    		} catch (IOException | ClassNotFoundException e) {
+    			e.printStackTrace();
+    		}
+    		}
+    	}
+    }
+    
+    
+

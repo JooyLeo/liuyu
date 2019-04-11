@@ -1,0 +1,8 @@
+package com.yychatclient.controller;
+
+import com.yychatserver.controller.ServerReceiver;
+
+public class ServerReceiverThread extends Thread{
+
+	public ServerReceiverThread(Scoket s){
+}
